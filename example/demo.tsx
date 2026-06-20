@@ -60,7 +60,7 @@ function Demo() {
   return (
     <div className="page">
       <div className="card">
-        <h1 className="title">react-intl-phone-input</h1>
+        <h1 className="title">react-intl-phone-number</h1>
         <p className="subtitle">
           antd-free · E.164 · google-libphonenumber · themeable
         </p>

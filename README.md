@@ -1,4 +1,4 @@
-# react-intl-phone-input
+# react-intl-phone-number
 
 A framework-agnostic, **Ant-Design-free** international phone number input for React.
 
@@ -8,7 +8,7 @@ A framework-agnostic, **Ant-Design-free** international phone number input for R
 - 🎨 Modern, themeable CSS — every part is a CSS variable and every node accepts a
   `classNames` override, so external utilities (e.g. Tailwind) win without `!important`.
 - 🌐 i18n via a `messages` object (English defaults) **and/or** your own `t()` function.
-- 🧩 Framework-agnostic core (`react-intl-phone-input/core`) — validate without React.
+- 🧩 Framework-agnostic core (`react-intl-phone-number/core`) — validate without React.
 
 ## Preview
 
@@ -19,7 +19,7 @@ A framework-agnostic, **Ant-Design-free** international phone number input for R
 ## Install
 
 ```bash
-npm i react-intl-phone-input
+npm i react-intl-phone-number
 ```
 
 Peer dependencies (declared, so most package managers install them automatically):
@@ -36,8 +36,8 @@ npm i react react-dom google-libphonenumber
 
 ```tsx
 import { useState } from "react"
-import PhoneNumberInput from "react-intl-phone-input"
-import "react-intl-phone-input/styles.css" // import once, anywhere in your app
+import PhoneNumberInput from "react-intl-phone-number"
+import "react-intl-phone-number/styles.css" // import once, anywhere in your app
 
 function Example() {
   const [phone, setPhone] = useState("") // E.164, e.g. "+66948383493"
@@ -55,7 +55,7 @@ function Example() {
 Using CommonJS / `require`? The component is the `default` (or the named export):
 
 ```js
-const { PhoneNumberInput, validatePhoneNumber } = require("react-intl-phone-input")
+const { PhoneNumberInput, validatePhoneNumber } = require("react-intl-phone-number")
 ```
 
 ## Validation levels
@@ -136,7 +136,7 @@ import {
   phoneReasonI18nKey,
   toE164,
   getPhoneTypeHints,
-} from "react-intl-phone-input/core"
+} from "react-intl-phone-number/core"
 
 validatePhoneNumber("+66948383493", { level: "strict" }) // { valid: true, reason: null }
 getPhoneNumberError("+6612") // "TOO_SHORT" (level defaults to "strict")
