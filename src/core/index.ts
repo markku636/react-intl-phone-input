@@ -19,6 +19,7 @@ export {
   isValidByLevel,
   getPhoneNumberError,
   phoneReasonI18nKey,
+  phoneReasonMessage,
 } from "./validate"
 
 export { parseE164, toE164, formatNational, blurFormat } from "./format"

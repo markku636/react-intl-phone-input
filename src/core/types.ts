@@ -44,7 +44,10 @@ export interface ValidateOptions {
 
 export interface ValidateResult {
   valid: boolean
+  /** google-libphonenumber-derived classification code (null when valid). */
   reason: PhoneValidationReason | null
+  /** Default English message for `reason` (null when valid). */
+  message: string | null
 }
 
 export interface IPhoneExampleHint {

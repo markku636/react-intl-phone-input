@@ -39,6 +39,30 @@ const REASON_I18N_KEY: Record<PhoneValidationReason, string> = {
 export const phoneReasonI18nKey = (reason: PhoneValidationReason): string =>
   REASON_I18N_KEY[reason]
 
+/** Default English message per reason code (plain text, no trailing code suffix). */
+const REASON_MESSAGE: Record<PhoneValidationReason, string> = {
+  INVALID_COUNTRY_CODE: "Invalid country calling code.",
+  NOT_A_NUMBER: "Phone number contains invalid characters.",
+  TOO_SHORT: "Phone number is too short.",
+  TOO_LONG: "Phone number is too long.",
+  INVALID_LENGTH:
+    "Phone number length does not match this country's numbering rules.",
+  NOT_VALID:
+    "Number length is valid but it is not a recognized number in this region.",
+}
+
+/** Reason code → default English message (for callers that just want a string). */
+export const phoneReasonMessage = (reason: PhoneValidationReason): string =>
+  REASON_MESSAGE[reason]
+
+const passResult: ValidateResult = { valid: true, reason: null, message: null }
+
+const fail = (reason: PhoneValidationReason): ValidateResult => ({
+  valid: false,
+  reason,
+  message: REASON_MESSAGE[reason],
+})
+
 const { MOBILE, FIXED_LINE, FIXED_LINE_OR_MOBILE } = PhoneNumberType
 
 const isMobileValid = (pn: GlPhoneNumber): boolean => {
@@ -84,38 +108,30 @@ export function validatePhoneNumber(
   value: string,
   opts: ValidateOptions,
 ): ValidateResult {
-  if (!value) return { valid: true, reason: null }
+  if (!value) return passResult
 
   const region = value.startsWith("+") ? undefined : opts.country
   const outcome = parseStrict(value, region)
-  if (!outcome.ok) return { valid: false, reason: outcome.reason }
+  if (!outcome.ok) return fail(outcome.reason)
   const pn = outcome.pn
 
   switch (opts.level) {
     case "strict": {
-      if (util.isValidNumber(pn)) return { valid: true, reason: null }
-      if (!util.isPossibleNumber(pn)) {
-        return { valid: false, reason: resolveLengthReason(pn) }
-      }
-      return { valid: false, reason: "NOT_VALID" }
+      if (util.isValidNumber(pn)) return passResult
+      if (!util.isPossibleNumber(pn)) return fail(resolveLengthReason(pn))
+      return fail("NOT_VALID")
     }
     case "mobile-strict": {
-      if (isMobileValid(pn) || possibleFixed(pn)) {
-        return { valid: true, reason: null }
-      }
-      if (!util.isPossibleNumber(pn)) {
-        return { valid: false, reason: resolveLengthReason(pn) }
-      }
-      return { valid: false, reason: "NOT_VALID" }
+      if (isMobileValid(pn) || possibleFixed(pn)) return passResult
+      if (!util.isPossibleNumber(pn)) return fail(resolveLengthReason(pn))
+      return fail("NOT_VALID")
     }
     case "loose": {
-      if (possibleMobile(pn) || possibleFixed(pn)) {
-        return { valid: true, reason: null }
-      }
-      return { valid: false, reason: resolveLengthReason(pn) }
+      if (possibleMobile(pn) || possibleFixed(pn)) return passResult
+      return fail(resolveLengthReason(pn))
     }
     default:
-      return { valid: false, reason: "NOT_VALID" }
+      return fail("NOT_VALID")
   }
 }
 

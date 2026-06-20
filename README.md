@@ -132,16 +132,26 @@ Key tokens: `--ripn-border-color`, `--ripn-border-color-hover`,
 ```ts
 import {
   validatePhoneNumber,
+  phoneReasonMessage,
   getPhoneNumberError,
   phoneReasonI18nKey,
   toE164,
-  getPhoneTypeHints,
 } from "react-intl-phone-number/core"
 
-validatePhoneNumber("+66948383493", { level: "strict" }) // { valid: true, reason: null }
-getPhoneNumberError("+6612") // "TOO_SHORT" (level defaults to "strict")
+// Every result carries the google-libphonenumber-derived `reason` CODE *and* a
+// default English `message` — display it directly, or map the code yourself.
+validatePhoneNumber("+66948383493", { level: "strict" })
+// → { valid: true,  reason: null,        message: null }
+validatePhoneNumber("+6612", { level: "strict" })
+// → { valid: false, reason: "TOO_SHORT", message: "Phone number is too short." }
+
+getPhoneNumberError("+6612") //  "TOO_SHORT"  (just the code; level defaults to "strict")
+phoneReasonMessage("TOO_LONG") //  "Phone number is too long."
+phoneReasonI18nKey("TOO_SHORT") //  "Label_PhoneNumber_TooShort"  (for your own i18n)
 ```
 
+`reason` is one of `INVALID_COUNTRY_CODE` / `NOT_A_NUMBER` / `TOO_SHORT` / `TOO_LONG` /
+`INVALID_LENGTH` / `NOT_VALID` (mirrors google-libphonenumber's classification).
 No React, no DOM — usable in form validators or on a server.
 
 ## License

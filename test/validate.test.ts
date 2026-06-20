@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 
 import {
   getPhoneNumberError,
+  phoneReasonMessage,
   validatePhoneNumber,
 } from "../src/core"
 import type { ValidationLevel } from "../src/core"
@@ -14,6 +15,7 @@ describe("validatePhoneNumber — ported cases", () => {
       expect(validatePhoneNumber("", { level })).toEqual({
         valid: true,
         reason: null,
+        message: null,
       })
     })
   })
@@ -22,6 +24,7 @@ describe("validatePhoneNumber — ported cases", () => {
     expect(validatePhoneNumber("+66948383493", { level: "strict" })).toEqual({
       valid: true,
       reason: null,
+      message: null,
     })
   })
 
@@ -70,7 +73,7 @@ describe("validatePhoneNumber — level matrix", () => {
   it("widens with looseness: possible-length-but-pattern-invalid", () => {
     // +10000000000 (US): isPossible=true, isValid=false.
     const value = "+10000000000"
-    expect(validatePhoneNumber(value, { level: "strict" })).toEqual({
+    expect(validatePhoneNumber(value, { level: "strict" })).toMatchObject({
       valid: false,
       reason: "NOT_VALID",
     })
@@ -88,6 +91,25 @@ describe("validatePhoneNumber — level matrix", () => {
       expect(result.valid).toBe(false)
       expect(result.reason).toBe("TOO_SHORT")
     })
+  })
+})
+
+describe("error exposes both the code and an English message", () => {
+  it("returns reason (google-derived code) + default English message", () => {
+    const result = validatePhoneNumber("+6612", { level: "strict" })
+    expect(result.reason).toBe("TOO_SHORT")
+    expect(result.message).toBe("Phone number is too short.")
+  })
+
+  it("message is null when valid", () => {
+    expect(validatePhoneNumber("+66948383493", { level: "strict" }).message).toBeNull()
+  })
+
+  it("phoneReasonMessage maps every reason to English text", () => {
+    expect(phoneReasonMessage("TOO_LONG")).toBe("Phone number is too long.")
+    expect(phoneReasonMessage("INVALID_COUNTRY_CODE")).toBe(
+      "Invalid country calling code.",
+    )
   })
 })
 

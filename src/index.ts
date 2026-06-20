@@ -22,6 +22,7 @@ export {
   isValidByLevel,
   getPhoneNumberError,
   phoneReasonI18nKey,
+  phoneReasonMessage,
   parseE164,
   toE164,
   formatNational,

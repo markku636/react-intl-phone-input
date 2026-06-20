@@ -32,7 +32,9 @@ function Field({
       status = <div className="status status--ok">✓ Valid · {level}</div>
     } else if (value && !result.valid) {
       status = (
-        <div className="status status--bad">✗ Invalid · {result.reason}</div>
+        <div className="status status--bad">
+          ✗ {result.reason} — {result.message}
+        </div>
       )
     } else if (isEmptyRequired) {
       status = <div className="status status--bad">Phone Number is required</div>
