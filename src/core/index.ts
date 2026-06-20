@@ -18,9 +18,13 @@ export {
   validatePhoneNumber,
   isValidByLevel,
   getPhoneNumberError,
+} from "./validate"
+
+export {
   phoneReasonI18nKey,
   phoneReasonMessage,
-} from "./validate"
+  PHONE_VALIDATION_REASONS,
+} from "./reasons"
 
 export { parseE164, toE164, formatNational, blurFormat } from "./format"
 

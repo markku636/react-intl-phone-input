@@ -75,6 +75,14 @@
   border-color: var(--ripn-error-color);
 }
 
+.ripn-error-text {
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ripn-error-color);
+  white-space: pre-line;
+}
+
 .ripn--disabled .ripn-group {
   background: var(--ripn-bg-disabled);
   cursor: not-allowed;

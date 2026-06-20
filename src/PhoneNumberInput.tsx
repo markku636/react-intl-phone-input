@@ -4,6 +4,7 @@ import {
   useState,
   type ChangeEvent,
   type CSSProperties,
+  type ReactNode,
   type Ref,
 } from "react"
 
@@ -15,6 +16,7 @@ import {
   isValidByLevel,
   parseE164,
   toE164,
+  validatePhoneNumber,
 } from "./core"
 import type {
   CountryCode,
@@ -62,12 +64,24 @@ export interface IPhoneNumberInputProps {
   t?: TranslateFn
   /** Fires when computed validity (per validationLevel) changes. */
   onValidityChange?: (isValid: boolean) => void
+  /** Render the built-in validation error below the input after blur. Default false. */
+  showError?: boolean
+  /** Explicit error to render (overrides the built-in one; e.g. a "required" message). */
+  error?: ReactNode
 
   className?: string
   style?: CSSProperties
   classNames?: Partial<
     Record<
-      "root" | "group" | "select" | "dropdown" | "option" | "input" | "tooltip" | "infoIcon",
+      | "root"
+      | "group"
+      | "select"
+      | "dropdown"
+      | "option"
+      | "input"
+      | "tooltip"
+      | "infoIcon"
+      | "error",
       string
     >
   >
@@ -89,6 +103,8 @@ function PhoneNumberInput({
   messages,
   t,
   onValidityChange,
+  showError,
+  error,
   className,
   style,
   classNames,
@@ -115,6 +131,9 @@ function PhoneNumberInput({
   const [displayValue, setDisplayValue] = useState(initDisplay)
   const [showZeroHint, setShowZeroHint] = useState(false)
   const [typeHints, setTypeHints] = useState<IPhoneTypeRule[]>([])
+  // Pre-filled values count as touched so a controlled invalid value can show
+  // its error immediately (fresh typing stays untouched until blur).
+  const [touched, setTouched] = useState(Boolean(value))
 
   const lastEmittedRef = useRef(value ?? "")
   const hintTypesKey = hintTypes.join(",")
@@ -154,6 +173,7 @@ function PhoneNumberInput({
       setCountry(defaultCountry)
       setDisplayValue("")
       lastEmittedRef.current = ""
+      setTouched(false)
       onChange?.("")
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -172,6 +192,7 @@ function PhoneNumberInput({
     setCountry(newCountry)
     setDisplayValue("")
     lastEmittedRef.current = ""
+    setTouched(false)
     onChange?.("")
   }
 
@@ -235,6 +256,7 @@ function PhoneNumberInput({
 
   const handleNumberBlur = () => {
     setShowZeroHint(false)
+    setTouched(true)
     if (!country) {
       onBlur?.()
       return
@@ -272,6 +294,19 @@ function PhoneNumberInput({
     </div>
   ) : null
 
+  // Built-in error display (opt-in). Only parses when showError/error is active.
+  const autoError =
+    showError && touched && value
+      ? validatePhoneNumber(value, { country, level: validationLevel })
+      : null
+  const shownError =
+    error ??
+    (autoError && !autoError.valid && autoError.reason
+      ? resolve.reason(autoError.reason)
+      : null)
+  const hasError = shownError != null && shownError !== false
+  const errorId = id ? `${id}-error` : undefined
+
   return (
     <div
       className={[
@@ -285,7 +320,15 @@ function PhoneNumberInput({
       style={style}
       id={id}
     >
-      <div className={`ripn-group ${classNames?.group ?? ""}`}>
+      <div
+        className={[
+          "ripn-group",
+          classNames?.group ?? "",
+          hasError ? "ripn-error" : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+      >
         <CountrySelect
           value={country}
           onChange={handleCountryChange}
@@ -315,6 +358,8 @@ function PhoneNumberInput({
             name={name}
             id={id ? `${id}-input` : undefined}
             ariaLabel={ariaLabel}
+            ariaInvalid={hasError}
+            describedBy={hasError ? errorId : undefined}
             className={classNames?.input}
             suffix={
               ruleHintContent ? (
@@ -328,6 +373,15 @@ function PhoneNumberInput({
           />
         </Tooltip>
       </div>
+      {hasError ? (
+        <div
+          id={errorId}
+          role="alert"
+          className={`ripn-error-text ${classNames?.error ?? ""}`}
+        >
+          {shownError}
+        </div>
+      ) : null}
     </div>
   )
 }

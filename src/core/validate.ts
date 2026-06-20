@@ -18,6 +18,7 @@ import {
   ValidationResult,
   type GlPhoneNumber,
 } from "./libphone"
+import { phoneReasonMessage } from "./reasons"
 import type {
   CountryCode,
   PhoneValidationReason,
@@ -26,41 +27,12 @@ import type {
   ValidationLevel,
 } from "./types"
 
-const REASON_I18N_KEY: Record<PhoneValidationReason, string> = {
-  INVALID_COUNTRY_CODE: "Label_PhoneNumber_InvalidCountryCode",
-  NOT_A_NUMBER: "Label_PhoneNumber_NotANumber",
-  TOO_SHORT: "Label_PhoneNumber_TooShort",
-  TOO_LONG: "Label_PhoneNumber_TooLong",
-  INVALID_LENGTH: "Label_PhoneNumber_InvalidLength",
-  NOT_VALID: "Label_PhoneNumber_NotValid",
-}
-
-/** Reason code → legacy i18n key (re-exported for back-compat with existing callers). */
-export const phoneReasonI18nKey = (reason: PhoneValidationReason): string =>
-  REASON_I18N_KEY[reason]
-
-/** Default English message per reason code (plain text, no trailing code suffix). */
-const REASON_MESSAGE: Record<PhoneValidationReason, string> = {
-  INVALID_COUNTRY_CODE: "Invalid country calling code.",
-  NOT_A_NUMBER: "Phone number contains invalid characters.",
-  TOO_SHORT: "Phone number is too short.",
-  TOO_LONG: "Phone number is too long.",
-  INVALID_LENGTH:
-    "Phone number length does not match this country's numbering rules.",
-  NOT_VALID:
-    "Number length is valid but it is not a recognized number in this region.",
-}
-
-/** Reason code → default English message (for callers that just want a string). */
-export const phoneReasonMessage = (reason: PhoneValidationReason): string =>
-  REASON_MESSAGE[reason]
-
 const passResult: ValidateResult = { valid: true, reason: null, message: null }
 
 const fail = (reason: PhoneValidationReason): ValidateResult => ({
   valid: false,
   reason,
-  message: REASON_MESSAGE[reason],
+  message: phoneReasonMessage(reason),
 })
 
 const { MOBILE, FIXED_LINE, FIXED_LINE_OR_MOBILE } = PhoneNumberType

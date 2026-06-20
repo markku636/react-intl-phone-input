@@ -1,7 +1,7 @@
 import { useState } from "react"
 import ReactDOM from "react-dom"
 
-import PhoneNumberInput, { validatePhoneNumber } from "../src"
+import PhoneNumberInput from "../src"
 import type { ValidationLevel } from "../src"
 import "../src/styles.css"
 
@@ -19,40 +19,23 @@ function Field({
   required?: boolean
 }) {
   const [value, setValue] = useState(initial)
-  // Validate on blur (and reflect it live once the field has been touched).
-  const [touched, setTouched] = useState(initial !== "" || Boolean(required))
-
-  const result = validatePhoneNumber(value, { level })
-  const isEmptyRequired = required && !value
-  const invalid = touched && (isEmptyRequired || (!!value && !result.valid))
-
-  let status = null
-  if (touched) {
-    if (value && result.valid) {
-      status = <div className="status status--ok">✓ Valid · {level}</div>
-    } else if (value && !result.valid) {
-      status = (
-        <div className="status status--bad">
-          ✗ {result.reason} — {result.message}
-        </div>
-      )
-    } else if (isEmptyRequired) {
-      status = <div className="status status--bad">Phone Number is required</div>
-    }
-  }
-
+  const [valid, setValid] = useState<boolean | null>(null)
   return (
     <div className="field">
       <label className="field__label">{label}</label>
+      {/* showError = built-in error display; error = explicit override (required). */}
       <PhoneNumberInput
         value={value}
         onChange={setValue}
-        onBlur={() => setTouched(true)}
+        onValidityChange={setValid}
         defaultCountry={defaultCountry}
         validationLevel={level}
-        classNames={invalid ? { group: "ripn-error" } : undefined}
+        showError
+        error={required && !value ? "Phone Number is required" : undefined}
       />
-      {status}
+      {value && valid ? (
+        <div className="status status--ok">✓ Valid · {level}</div>
+      ) : null}
       <div className="field__value">value: {value || "—"}</div>
     </div>
   )
@@ -73,13 +56,13 @@ function Demo() {
           level="mobile-strict"
         />
         <Field
-          label="Thailand — too long (validation catches it)"
+          label="Thailand — too long (built-in error)"
           initial="+6688888889999"
           defaultCountry="TH"
           level="strict"
         />
         <Field
-          label="Vietnam — required (error state)"
+          label="Vietnam — required (error prop)"
           defaultCountry="VN"
           level="strict"
           required

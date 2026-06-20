@@ -1,9 +1,18 @@
 import { fireEvent, render, screen } from "@testing-library/react"
+import { useState } from "react"
 import { describe, expect, it, vi } from "vitest"
 
 import PhoneNumberInput from "../src"
+import type { IPhoneNumberInputProps } from "../src"
 
 const PLACEHOLDER = "Phone number"
+
+/** Controlled wrapper — the built-in error renders from the `value` prop. */
+function Controlled(props: Omit<IPhoneNumberInputProps, "value" | "onChange">) {
+  const [value, setValue] = useState("")
+  // eslint-disable-next-line react/jsx-props-no-spreading
+  return <PhoneNumberInput value={value} onChange={setValue} {...props} />
+}
 
 describe("PhoneNumberInput", () => {
   it("renders the phone input", () => {
@@ -75,5 +84,33 @@ describe("PhoneNumberInput", () => {
       />,
     )
     expect(screen.getByPlaceholderText("輸入電話號碼")).toBeInTheDocument()
+  })
+
+  it("shows the built-in error after blur when showError is set", () => {
+    render(<Controlled validationLevel="strict" defaultCountry="TH" showError />)
+    const input = screen.getByPlaceholderText(PLACEHOLDER)
+    fireEvent.change(input, { target: { value: "12" } }) // too short for TH
+    fireEvent.blur(input)
+    expect(screen.getByRole("alert")).toHaveTextContent("Phone number is too short.")
+    expect(input).toHaveAttribute("aria-invalid", "true")
+  })
+
+  it("shows no error for a valid number", () => {
+    render(<Controlled validationLevel="strict" defaultCountry="MY" showError />)
+    const input = screen.getByPlaceholderText(PLACEHOLDER)
+    fireEvent.change(input, { target: { value: "123456789" } }) // valid MY mobile
+    fireEvent.blur(input)
+    expect(screen.queryByRole("alert")).toBeNull()
+  })
+
+  it("renders an explicit error prop (overriding the built-in one)", () => {
+    render(
+      <PhoneNumberInput
+        validationLevel="strict"
+        defaultCountry="VN"
+        error="Phone Number is required"
+      />,
+    )
+    expect(screen.getByRole("alert")).toHaveTextContent("Phone Number is required")
   })
 })

@@ -75,6 +75,24 @@ const { PhoneNumberInput, validatePhoneNumber } = require("react-intl-phone-numb
 > length. The mobile-vs-landline distinction is only observable in regions whose
 > mobile and landline lengths are disjoint.
 
+## Built-in error display
+
+By default the component renders no error (you wire validation yourself). Opt in with
+`showError` to render the validation message under the input after blur, or pass an
+explicit `error` node (e.g. your "required" message):
+
+```tsx
+// auto: shows the reason message (per validationLevel) once the field is blurred
+<PhoneNumberInput validationLevel="strict" showError />
+
+// explicit: you control the message (overrides the built-in one)
+<PhoneNumberInput validationLevel="strict" error={isRequired ? "Phone is required" : undefined} />
+```
+
+The control gets a red border and the input gets `aria-invalid`; the error text is
+themeable via `--ripn-error-color` and `classNames.error`. Error wording comes from the
+core single source (`phoneReasonMessage`) and bridges to your `t` when provided.
+
 ## i18n
 
 Both are optional; built-in English is used otherwise.
@@ -91,6 +109,11 @@ Both are optional; built-in English is used otherwise.
 <PhoneNumberInput validationLevel="strict" t={(key, vars) => i18n.t(key, vars)} />
 ```
 
+> `messages` covers the component-visible strings (placeholder, zero hint, format hints,
+> number-type labels). Validation **error** wording lives in the core single source
+> (`phoneReasonMessage` / `validatePhoneNumber().message`) and is shown via `showError` /
+> `error`; pass `t` to translate it through your existing `Label_PhoneNumber_*` keys.
+
 ## Props
 
 | prop | type | notes |
@@ -105,8 +128,10 @@ Both are optional; built-in English is used otherwise.
 | `messages` | `Partial<Messages>` | i18n overrides |
 | `t` | `(key, vars?) => string` | translate fn; wins over `messages` |
 | `onValidityChange` | `(isValid: boolean) => void` | computed only when provided |
+| `showError` | `boolean` | render the built-in validation error under the input after blur |
+| `error` | `ReactNode` | explicit error to show (overrides the built-in one; e.g. "required") |
 | `className` / `style` | | on the root |
-| `classNames` | `Partial<Record<'root'\|'group'\|'select'\|'dropdown'\|'option'\|'input'\|'tooltip'\|'infoIcon', string>>` | per-part overrides (drop in Tailwind classes) |
+| `classNames` | `Partial<Record<'root'\|'group'\|'select'\|'dropdown'\|'option'\|'input'\|'tooltip'\|'infoIcon'\|'error', string>>` | per-part overrides (drop in Tailwind classes) |
 | `id` / `name` / `aria-label` / `inputRef` | | form / a11y plumbing |
 
 ## Theming

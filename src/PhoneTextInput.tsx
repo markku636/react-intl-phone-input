@@ -13,6 +13,8 @@ interface PhoneTextInputProps {
   name?: string
   id?: string
   ariaLabel?: string
+  ariaInvalid?: boolean
+  describedBy?: string
   className?: string
 }
 
@@ -29,6 +31,8 @@ export function PhoneTextInput({
   name,
   id,
   ariaLabel,
+  ariaInvalid,
+  describedBy,
   className,
 }: PhoneTextInputProps) {
   return (
@@ -46,6 +50,8 @@ export function PhoneTextInput({
         name={name}
         id={id}
         aria-label={ariaLabel}
+        aria-invalid={ariaInvalid || undefined}
+        aria-describedby={describedBy}
         autoComplete="tel-national"
         inputMode="numeric"
       />

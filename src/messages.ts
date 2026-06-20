@@ -5,6 +5,7 @@
  * is keyed by the legacy `Label_PhoneNumber_*` keys so existing apps reuse their
  * react-i18next locale files with zero key duplication.
  */
+import { phoneReasonI18nKey, phoneReasonMessage } from "./core"
 import type { PhoneNumberKind, PhoneValidationReason } from "./core/types"
 
 export interface Messages {
@@ -15,13 +16,6 @@ export interface Messages {
   ruleHintLine: string
   /** Interpolated with {{lengths}}. */
   ruleHintLineNoExample: string
-
-  reasonInvalidCountryCode: string
-  reasonNotANumber: string
-  reasonTooShort: string
-  reasonTooLong: string
-  reasonInvalidLength: string
-  reasonNotValid: string
 
   typeMOBILE: string
   typeFIXED_LINE: string
@@ -48,15 +42,6 @@ export const DEFAULT_MESSAGES: Messages = {
   ruleHintLine: "{{example}} ({{lengths}} digits)",
   ruleHintLineNoExample: "{{lengths}} digits",
 
-  reasonInvalidCountryCode: "Invalid country code.\n(INVALID_COUNTRY_CODE)",
-  reasonNotANumber: "Phone number contains invalid characters.\n(NOT_A_NUMBER)",
-  reasonTooShort: "Phone number is too short.\n(TOO_SHORT)",
-  reasonTooLong: "Phone number is too long.\n(TOO_LONG)",
-  reasonInvalidLength:
-    "Phone number length does not match this country's numbering rules.\n(INVALID_LENGTH)",
-  reasonNotValid:
-    "Number length is valid but it is not a recognized number in this region.\n(NOT_VALID)",
-
   typeMOBILE: "Mobile",
   typeFIXED_LINE: "Landline",
   typeFIXED_LINE_OR_MOBILE: "Landline / Mobile",
@@ -78,13 +63,6 @@ const KEY_MAP: Record<keyof Messages, string> = {
   ruleHintLine: "Label_PhoneNumber_RuleHintLine",
   ruleHintLineNoExample: "Label_PhoneNumber_RuleHintLineNoExample",
 
-  reasonInvalidCountryCode: "Label_PhoneNumber_InvalidCountryCode",
-  reasonNotANumber: "Label_PhoneNumber_NotANumber",
-  reasonTooShort: "Label_PhoneNumber_TooShort",
-  reasonTooLong: "Label_PhoneNumber_TooLong",
-  reasonInvalidLength: "Label_PhoneNumber_InvalidLength",
-  reasonNotValid: "Label_PhoneNumber_NotValid",
-
   typeMOBILE: "Label_PhoneNumber_Type_MOBILE",
   typeFIXED_LINE: "Label_PhoneNumber_Type_FIXED_LINE",
   typeFIXED_LINE_OR_MOBILE: "Label_PhoneNumber_Type_FIXED_LINE_OR_MOBILE",
@@ -96,15 +74,6 @@ const KEY_MAP: Record<keyof Messages, string> = {
   typePAGER: "Label_PhoneNumber_Type_PAGER",
   typeUAN: "Label_PhoneNumber_Type_UAN",
   typeVOICEMAIL: "Label_PhoneNumber_Type_VOICEMAIL",
-}
-
-const REASON_KEY: Record<PhoneValidationReason, keyof Messages> = {
-  INVALID_COUNTRY_CODE: "reasonInvalidCountryCode",
-  NOT_A_NUMBER: "reasonNotANumber",
-  TOO_SHORT: "reasonTooShort",
-  TOO_LONG: "reasonTooLong",
-  INVALID_LENGTH: "reasonInvalidLength",
-  NOT_VALID: "reasonNotValid",
 }
 
 function interpolate(
@@ -144,7 +113,16 @@ export function makeResolver(
 
   return {
     text,
-    reason: (reason) => text(REASON_KEY[reason]),
+    // Reason text lives in core (single source). Bridge to `t` via the legacy
+    // i18n key when provided; otherwise fall back to the core English default.
+    reason: (reason) => {
+      if (t) {
+        const key = phoneReasonI18nKey(reason)
+        const translated = t(key)
+        if (translated && translated !== key) return translated
+      }
+      return phoneReasonMessage(reason)
+    },
     type: (kind) => text(`type${kind}` as keyof Messages),
   }
 }

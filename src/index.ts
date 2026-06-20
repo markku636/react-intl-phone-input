@@ -23,6 +23,7 @@ export {
   getPhoneNumberError,
   phoneReasonI18nKey,
   phoneReasonMessage,
+  PHONE_VALIDATION_REASONS,
   parseE164,
   toE164,
   formatNational,
