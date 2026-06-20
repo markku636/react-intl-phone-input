@@ -1,6 +1,6 @@
 {
   "name": "react-intl-phone-number",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Framework-agnostic, antd-free international phone number input for React. E.164 in/out, searchable flag/country-code dropdown, configurable validation levels (strict / mobile-strict / loose), modern themeable CSS, i18n via a messages object or your own t() function. Phone logic powered by google-libphonenumber.",
   "type": "module",
   "license": "MIT",
