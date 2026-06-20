@@ -1,0 +1,12 @@
+# Whitelisted via package.json "files"; this is belt-and-suspenders.
+src
+test
+node_modules
+coverage
+.github
+*.config.ts
+tsconfig.json
+.eslintrc.json
+.prettierrc
+*.tgz
+*.log

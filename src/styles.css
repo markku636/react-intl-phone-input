@@ -1,0 +1,328 @@
+/*
+ * react-intl-phone-input — default theme.
+ *
+ * Design goals:
+ * - Modern, clean look (Tailwind-ish: subtle borders, rounded corners, ring focus).
+ * - Easy to override from the outside: every value is a CSS custom property, and
+ *   selectors are single-class / low-specificity so a consumer's utility classes
+ *   (e.g. Tailwind) win without !important. You may also pass `classNames.*` per part.
+ *
+ * Import once:  import "react-intl-phone-input/styles.css"
+ */
+
+.ripn-root {
+  /* Theme tokens — override these on .ripn-root (or :root) to re-skin. */
+  --ripn-border-color: #d1d5db;
+  --ripn-border-color-hover: #9ca3af;
+  --ripn-border-color-focus: #2563eb;
+  --ripn-ring: rgba(37, 99, 235, 0.2);
+  --ripn-radius: 8px;
+  --ripn-height: 38px;
+  --ripn-font-size: 14px;
+  --ripn-bg: #fff;
+  --ripn-bg-disabled: #f3f4f6;
+  --ripn-bg-hover: #f9fafb;
+  --ripn-text: #111827;
+  --ripn-placeholder: #9ca3af;
+  --ripn-muted: #6b7280;
+  --ripn-error-color: #ef4444;
+  --ripn-warning-bg: #f59e0b;
+  --ripn-select-width: 96px;
+  --ripn-dropdown-min-width: 240px;
+  --ripn-dropdown-max-height: 280px;
+  --ripn-option-active-bg: #f3f4f6;
+  --ripn-option-selected-bg: #eff6ff;
+  --ripn-option-selected-text: #2563eb;
+  --ripn-tooltip-bg: #1f2937;
+  --ripn-tooltip-text: #fff;
+  --ripn-z-popup: 1100;
+
+  box-sizing: border-box;
+  width: 100%;
+  font-size: var(--ripn-font-size);
+  color: var(--ripn-text);
+}
+
+.ripn-root *,
+.ripn-root *::before,
+.ripn-root *::after {
+  box-sizing: border-box;
+}
+
+/* ---- joined control group (replaces antd Space.Compact) ---- */
+.ripn-group {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  height: var(--ripn-height);
+  border: 1px solid var(--ripn-border-color);
+  border-radius: var(--ripn-radius);
+  background: var(--ripn-bg);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ripn-group:hover {
+  border-color: var(--ripn-border-color-hover);
+}
+
+.ripn-group:focus-within {
+  border-color: var(--ripn-border-color-focus);
+  box-shadow: 0 0 0 3px var(--ripn-ring);
+}
+
+.ripn-error .ripn-group,
+.ripn-group.ripn-error {
+  border-color: var(--ripn-error-color);
+}
+
+.ripn--disabled .ripn-group {
+  background: var(--ripn-bg-disabled);
+  cursor: not-allowed;
+}
+
+/* ---- country select trigger ---- */
+.ripn-select-wrap {
+  position: relative;
+  display: flex;
+  flex: 0 0 auto;
+}
+
+.ripn-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: var(--ripn-select-width);
+  height: 100%;
+  padding: 0 8px;
+  border: none;
+  border-right: 1px solid var(--ripn-border-color);
+  border-radius: var(--ripn-radius) 0 0 var(--ripn-radius);
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.ripn-select:disabled {
+  cursor: not-allowed;
+  color: var(--ripn-muted);
+}
+
+.ripn-select__flag {
+  width: 20px;
+  height: 15px;
+  border-radius: 2px;
+  display: block;
+  flex: 0 0 auto;
+}
+
+.ripn-select__code {
+  font-size: 13px;
+}
+
+.ripn-select__caret {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--ripn-muted);
+}
+
+/* ---- dropdown ---- */
+.ripn-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: var(--ripn-z-popup);
+  min-width: var(--ripn-dropdown-min-width);
+  background: var(--ripn-bg);
+  border: 1px solid var(--ripn-border-color);
+  border-radius: var(--ripn-radius);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+
+.ripn-dropdown__search {
+  width: 100%;
+  height: 36px;
+  padding: 0 10px;
+  border: none;
+  border-bottom: 1px solid var(--ripn-border-color);
+  outline: none;
+  font: inherit;
+  color: inherit;
+}
+
+.ripn-dropdown__list {
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  max-height: var(--ripn-dropdown-max-height);
+  overflow-y: auto;
+}
+
+.ripn-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ripn-option__flag {
+  width: 20px;
+  height: 15px;
+  border-radius: 2px;
+  flex: 0 0 auto;
+}
+
+.ripn-option__code {
+  font-variant-numeric: tabular-nums;
+  color: var(--ripn-text);
+}
+
+.ripn-option__name {
+  color: var(--ripn-muted);
+  font-size: 13px;
+}
+
+.ripn-option--active {
+  background: var(--ripn-option-active-bg);
+}
+
+.ripn-option--selected {
+  background: var(--ripn-option-selected-bg);
+  color: var(--ripn-option-selected-text);
+}
+
+.ripn-divider {
+  height: 0;
+  margin: 4px 6px;
+  border-top: 1px solid var(--ripn-border-color);
+}
+
+.ripn-dropdown__empty {
+  padding: 12px;
+  text-align: center;
+  color: var(--ripn-muted);
+  font-size: 13px;
+}
+
+.ripn-flag-fallback {
+  font-size: 11px;
+  color: var(--ripn-muted);
+}
+
+/* ---- phone text input ---- */
+.ripn-tooltip-trigger {
+  display: inline-flex;
+}
+
+.ripn-input-trigger {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.ripn-input-shell {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  min-width: 0;
+}
+
+.ripn-input {
+  width: 100%;
+  height: 100%;
+  padding: 0 32px 0 12px;
+  border: none;
+  border-radius: 0 var(--ripn-radius) var(--ripn-radius) 0;
+  background: transparent;
+  outline: none;
+  font: inherit;
+  color: inherit;
+}
+
+.ripn-input::placeholder {
+  color: var(--ripn-placeholder);
+}
+
+.ripn-input:disabled {
+  cursor: not-allowed;
+}
+
+.ripn-suffix {
+  position: absolute;
+  right: 10px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.ripn-info-btn {
+  display: inline-flex;
+  align-items: center;
+  color: var(--ripn-muted);
+  cursor: help;
+}
+
+.ripn-info-icon {
+  width: 15px;
+  height: 15px;
+}
+
+/* ---- tooltip ----
+ * The tooltip is portalled to document.body, OUTSIDE .ripn-root, so it cannot
+ * inherit .ripn-root-scoped variables — hence the literal fallbacks below.
+ * To theme the tooltip, set --ripn-tooltip-bg / --ripn-tooltip-text /
+ * --ripn-warning-bg on :root (global), which the portal does inherit. */
+.ripn-tooltip {
+  z-index: var(--ripn-z-popup, 1100);
+  max-width: 280px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--ripn-tooltip-bg, #1f2937);
+  color: var(--ripn-tooltip-text, #fff);
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-line;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  pointer-events: none;
+}
+
+.ripn-tooltip--top {
+  transform: translate(-50%, calc(-100% - 8px));
+}
+
+.ripn-tooltip--bottom {
+  transform: translate(-50%, 8px);
+}
+
+.ripn-tooltip--warning {
+  background: var(--ripn-warning-bg, #f59e0b);
+}
+
+.ripn-tooltip__arrow {
+  position: absolute;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: inherit;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.ripn-tooltip--top .ripn-tooltip__arrow {
+  bottom: -4px;
+}
+
+.ripn-tooltip--bottom .ripn-tooltip__arrow {
+  top: -4px;
+}
+
+.ripn-rulehint__title {
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.ripn-rulehint__line {
+  white-space: pre-line;
+}

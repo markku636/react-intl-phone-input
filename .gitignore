@@ -1,0 +1,10 @@
+node_modules
+dist
+coverage
+*.tgz
+*.log
+.DS_Store
+
+# generated demo bundle (built from example/demo.tsx)
+example/demo.js
+example/demo.css
